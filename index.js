@@ -18,7 +18,14 @@ async function run() {
         await client.connect();
         const itemCollection = client.db('warehouse').collection('item')
 
-        //create
+        //...........................CREATE........................//
+        app.post('/items', async (req, res) => {
+            const newItem = req.body;
+            const result = await itemCollection.insertOne(newItem);
+            res.send(result)
+        })
+
+        //................................READ..........................//
         app.get('/items', async (req, res) => {
             const query = {};
             const cursor = itemCollection.find(query)
@@ -26,15 +33,37 @@ async function run() {
             res.send(items)
 
         })
-       
-       //single data load
-       app.get('/inventory/:id', async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) };
-        const item = await itemCollection.findOne(query);
-        res.send(item)
 
-    })
+        //..........................UPDATE..........................//
+        app.put('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedItem = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    ...updatedItem
+                }
+            };
+            const result = await itemCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+
+
+
+        //single data load
+        app.get('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const item = await itemCollection.findOne(query);
+            res.send(item)
+
+        })
 
 
 
