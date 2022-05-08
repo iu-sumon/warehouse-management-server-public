@@ -9,6 +9,10 @@ app.use(cors())
 app.use(express.json())
 
 
+ 
+
+
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.vc4pm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -18,8 +22,7 @@ async function run() {
         await client.connect();
         const itemCollection = client.db('warehouse').collection('item')
 
-
-
+         
         //...........................CREATE API........................//
 
         app.post('/items', async (req, res) => {
@@ -40,12 +43,19 @@ async function run() {
 
         //....................My Item Api................//
           app.get('/myItems', async (req, res) => {
+            const decodedEmail=req.decoded.email;
             const email=req.query.email;
-            const query ={email:email};
-            const cursor = itemCollection.find(query)
-            const items = await cursor.toArray()
-           
-            res.send(items)
+            if(email===decodedEmail)
+            {
+                const query ={email:email};
+                const cursor = itemCollection.find(query)
+                const items = await cursor.toArray()
+               
+                res.send(items)
+            }
+           else{
+               res.status(403).send({message:'forbidden access'})
+           }
 
         })
 
