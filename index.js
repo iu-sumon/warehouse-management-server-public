@@ -25,6 +25,7 @@ async function run() {
         app.post('/items', async (req, res) => {
             const newItem = req.body;
             const result = await itemCollection.insertOne(newItem);
+            console.log(result);
             res.send(result)
         })
         //........................READ API.....................//
@@ -37,15 +38,18 @@ async function run() {
 
         })
          
+
         //....................My Item Api................//
           app.get('/myItems', async (req, res) => {
             const email=req.query.email;
             const query ={email:email};
             const cursor = itemCollection.find(query)
             const items = await cursor.toArray()
+            console.log(items);
             res.send(items)
 
         })
+
 
         //..........................Decrement Quantity API..........................//
         app.put('/inventory/:id', async (req, res) => {
