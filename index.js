@@ -19,7 +19,15 @@ async function run() {
         const itemCollection = client.db('warehouse').collection('item')
 
 
-       //........................READ.....................//
+
+        //...........................CREATE API........................//
+
+        app.post('/items', async (req, res) => {
+            const newItem = req.body;
+            const result = await itemCollection.insertOne(newItem);
+            res.send(result)
+        })
+        //........................READ API.....................//
 
         app.get('/items', async (req, res) => {
             const query = {};
@@ -28,16 +36,18 @@ async function run() {
             res.send(items)
 
         })
+         
+        //....................My Item Api................//
+          app.get('/myItems', async (req, res) => {
+            const email=req.query.email;
+            const query ={email:email};
+            const cursor = itemCollection.find(query)
+            const items = await cursor.toArray()
+            res.send(items)
 
-        //...........................CREATE........................//
-
-        app.post('/items', async (req, res) => {
-            const newItem = req.body;
-            const result = await itemCollection.insertOne(newItem);
-            res.send(result)
         })
 
-        //..........................Decrement Quantity..........................//
+        //..........................Decrement Quantity API..........................//
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const updatedItem1 = req.body;
@@ -62,7 +72,7 @@ async function run() {
             res.send(result)
 
         })
-        //..........................UPDATE Quantity..........................//
+        //..........................UPDATE Quantity API..........................//
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const updatedItem2 = req.body;
@@ -88,7 +98,7 @@ async function run() {
 
         })
 
-        //............................DELETE......................//
+        //............................DELETE API......................//
 
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id;
@@ -102,8 +112,8 @@ async function run() {
 
 
 
-        //..........................single data load.....................//
-        
+        //..........................single data load API.....................//
+
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
