@@ -19,7 +19,8 @@ async function run() {
         const itemCollection = client.db('warehouse').collection('item')
 
 
-         
+       //........................READ.....................//
+
         app.get('/items', async (req, res) => {
             const query = {};
             const cursor = itemCollection.find(query)
@@ -27,31 +28,58 @@ async function run() {
             res.send(items)
 
         })
+
         //...........................CREATE........................//
+
         app.post('/items', async (req, res) => {
             const newItem = req.body;
             const result = await itemCollection.insertOne(newItem);
             res.send(result)
         })
 
-        //..........................UPDATE Quantity..........................//
+        //..........................Decrement Quantity..........................//
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id;
-            const updatedItem = req.body;
-            console.log(updatedItem);
+            const updatedItem1 = req.body;
+            console.log(updatedItem1);
 
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
 
-                    name: updatedItem.name,
-                    img: updatedItem.img,
-                    price: updatedItem.price,
-                    quantity: updatedItem.quantity,
-                    sold: updatedItem.sold,
-                    description: updatedItem.description,
-                    supplier: updatedItem.supplier
+                    name: updatedItem1.name,
+                    img: updatedItem1.img,
+                    price: updatedItem1.price,
+                    quantity: updatedItem1.quantity,
+                    sold: updatedItem1.sold,
+                    description: updatedItem1.description,
+                    supplier: updatedItem1.supplier
+
+                }
+            };
+            const result = await itemCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+        //..........................UPDATE Quantity..........................//
+        app.put('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedItem2 = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+
+                    name: updatedItem2.name,
+                    img: updatedItem2.img,
+                    price: updatedItem2.price,
+                    quantity: updatedItem2.quantity,
+                    sold: updatedItem2.sold,
+                    description: updatedItem2.description,
+                    supplier: updatedItem2.supplier
 
                 }
             };
@@ -60,13 +88,22 @@ async function run() {
 
         })
 
+        //............................DELETE......................//
+
+        app.delete('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await itemCollection.deleteOne(query);
+            res.send(result)
+
+        })
 
 
 
 
 
-
-        //single data load
+        //..........................single data load.....................//
+        
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
