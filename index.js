@@ -25,7 +25,6 @@ async function run() {
         app.post('/items', async (req, res) => {
             const newItem = req.body;
             const result = await itemCollection.insertOne(newItem);
-            console.log(result);
             res.send(result)
         })
         //........................READ API.....................//
@@ -45,7 +44,7 @@ async function run() {
             const query ={email:email};
             const cursor = itemCollection.find(query)
             const items = await cursor.toArray()
-            console.log(items);
+           
             res.send(items)
 
         })
@@ -55,8 +54,6 @@ async function run() {
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const updatedItem1 = req.body;
-            console.log(updatedItem1);
-
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedDoc = {
