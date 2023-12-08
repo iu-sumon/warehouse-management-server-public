@@ -8,13 +8,6 @@ require('dotenv').config()
 app.use(cors())
 app.use(express.json())
 
-
- 
-
-
-
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.vc4pm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
@@ -22,9 +15,7 @@ async function run() {
         client.connect();
         const itemCollection = client.db('warehouse').collection('item')
 
-         
         //...........................CREATE API........................//
-
         app.post('/items', async (req, res) => {
             const newItem = req.body;
             const result = await itemCollection.insertOne(newItem);
@@ -87,8 +78,6 @@ async function run() {
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const updatedItem2 = req.body;
-
-
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedDoc = {
@@ -118,11 +107,6 @@ async function run() {
             res.send(result)
 
         })
-
-
-
-
-
         //..........................single data load API.....................//
 
         app.get('/inventory/:id', async (req, res) => {
@@ -132,23 +116,13 @@ async function run() {
             res.send(item)
 
         })
-
-
-
-
-
-
     } finally {
 
     }
 }
 run().catch(console.dir);
-
-
-
-
 app.get('/', (req, res) => {
-    res.send('Running electronic store')
+    res.send('Running warehouse store')
 });
 
 app.listen(port, () => {
